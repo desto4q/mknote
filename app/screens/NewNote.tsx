@@ -6,12 +6,16 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {colors, tw} from '../utils/utils';
+import React, {Component, useEffect, useRef, useState} from 'react';
+import {colors, showBodyError, showNotification, tw} from '../utils/utils';
 import {addToStorage, clearStorage} from '../storage/storage';
 import PagerView from 'react-native-pager-view';
 import MarkdownView from '../components/MarkdownView';
-import {IconArrowLeft, IconPencil} from '@tabler/icons-react-native';
+import {
+  IconArrowLeft,
+  IconBookmark,
+  IconPencil,
+} from '@tabler/icons-react-native';
 import Selector from '../components/Selector';
 import GoBack from '../components/GoBack';
 
@@ -20,12 +24,29 @@ export default function NewNote() {
   let [body, setBody] = useState('');
   let [initialPage, setIntialPage] = useState(0);
 
-  let onPres = () => {
+  let onPress = () => {
+    if (title.length < 1) {
+      if (body.length < 1) {
+        showBodyError();
+        return;
+      }
+      addToStorage({title: title, body: body});
+      showNotification(title);
+      return;
+    }
     if (body.length < 1) {
-      Alert.alert('body is empty ');
+      if (title.length < 1) {
+        showBodyError();
+        return;
+      }
+      addToStorage({title: title, body: body});
+      showNotification(title);
+
       return;
     }
     addToStorage({title: title, body: body});
+    showNotification(title);
+    return;
   };
 
   let clear = () => {
@@ -40,15 +61,15 @@ export default function NewNote() {
 
   return (
     <View style={tw('flex-1 py-2 gap-2 px-4')}>
-      <View style={tw('h-14 flex-row justify-between ')}>
+      <View style={tw('h-12 flex-row justify-between ')}>
         <GoBack />
         <Selector id={initialPage} setSelect={updatePage} />
         <TouchableOpacity
           style={tw(
-            'p-2 items-center justify-center bg-emerald-600 rounded-md',
+            'p-2 items-center justify-center bg-neutral-600 rounded-md',
           )}
-          onPress={onPres}>
-          <Text>Save</Text>
+          onPress={onPress}>
+          <IconBookmark size={22} color={colors.neutral[200]} />
         </TouchableOpacity>
       </View>
       <PagerView

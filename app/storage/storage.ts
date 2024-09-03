@@ -19,7 +19,7 @@ let addToStorage = ({title, body}: INotes) => {
   };
   let id = uuid.v4().toString();
   notesStorage.setMap(id, obj);
-  console.log(getObj(id));
+  // console.log(getObj(id));
 };
 
 let clearStorage = () => {
@@ -38,7 +38,14 @@ let updateNote = ({id, title, body}: IUpdate) => {
     body: body,
   };
   notesStorage.setMap(id, obj);
-  console.log(getObj(id));
+  // console.log(getObj(id));
+};
+
+let removeList = (keys: string[]) => {
+  for (let i of keys) {
+    notesStorage.removeItem(i);
+  }
+  // notesStorage.removeItems(keys);
 };
 
 let getAllNotes = async () => {
@@ -46,5 +53,20 @@ let getAllNotes = async () => {
   // console.log(items);
   return items as any[];
 };
-export {addToStorage, clearStorage, getAllNotes, updateNote};
+
+let getAllKeys = async () => {
+  try {
+    let keys = await notesStorage.indexer.maps.getKeys()
+    
+    return keys;
+  } catch (err) {}
+};
+export {
+  addToStorage,
+  clearStorage,
+  getAllNotes,
+  updateNote,
+  removeList,
+  getAllKeys,
+};
 export type {INotes};

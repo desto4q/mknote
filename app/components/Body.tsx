@@ -1,25 +1,17 @@
-import {View, Text, ScrollView, FlatList} from 'react-native';
+import {View, FlatList} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {useSearch} from './SearchContext';
 import {useFocusEffect} from '@react-navigation/native';
 import {tw} from '../utils/utils';
-import {getAllNotes} from '../storage/storage';
 import Cards from './Cards';
+import {useStorage} from './StorageContext';
 
 export default function Body() {
-  let {searchTerm} = useSearch();
-  let [items, setItems] = useState<any[]>([]);
   let looger = () => {
-    console.log('i focused');
+    // console.log('i focused');
   };
 
-  let updateItems = async () => {
-    let resp = await getAllNotes();
-    setItems(resp);
-  };
-  // useEffect(() => {
-  //   console.log(items);
-  // }, [items]);
+  let {items, updateItems} = useStorage();
+
   useFocusEffect(
     useCallback(() => {
       updateItems();
@@ -27,15 +19,15 @@ export default function Body() {
   );
   return (
     <View style={tw('flex-1')}>
-      <Text>{searchTerm}</Text>
+      {/* <Text>{searchTerm}</Text> */}
       <FlatList
+        keyboardShouldPersistTaps="handled"
         key={2}
         contentContainerStyle={tw('gap-2  ')}
         numColumns={2}
         data={items}
         renderItem={e => {
           let item = e.item;
-          // return <Text>ss</Text>;
           return (
             <Cards
               id={item[0]}

@@ -5,13 +5,18 @@ import {
   Touchable,
   TouchableOpacity,
   Alert,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {colors, tw} from '../utils/utils';
+import {colors, showNotification, tw, updateAnim} from '../utils/utils';
 import {addToStorage, clearStorage, updateNote} from '../storage/storage';
 import PagerView from 'react-native-pager-view';
 import MarkdownView from '../components/MarkdownView';
-import {IconArrowLeft, IconPencil} from '@tabler/icons-react-native';
+import {
+  IconArrowLeft,
+  IconBookmark,
+  IconPencil,
+} from '@tabler/icons-react-native';
 import Selector from '../components/Selector';
 import GoBack from '../components/GoBack';
 interface IEdit {
@@ -24,38 +29,41 @@ export default function EditNote({route}: any) {
   useEffect(() => {}, []);
   let [EditTitle, setTitle] = useState(title);
   let [EditBody, setBody] = useState(body);
-  let [initialPage, setIntialPage] = useState(0);
+  let [initialPage, setIntialPage] = useState(1);
 
   let updatePage = (id: number) => {
+    updateAnim();
     setIntialPage(id);
     pagerRef.current.setPage(id);
   };
   let onPress = () => {
-    updateNote({
-      id: id,
-      title: EditTitle,
-      body: EditBody,
-    });
+    try {
+      updateNote({
+        id: id,
+        title: EditTitle,
+        body: EditBody,
+      });
+      showNotification(EditTitle);
+    } catch (err) {}
   };
 
   let pagerRef = useRef<any>();
   return (
-    <View style={tw('flex-1 py-2 gap-2 px-4')}>
-      <View style={tw('h-14 flex-row justify-between ')}>
+    <View style={tw('flex-1 py-2 gap-2 px-2')}>
+      <View style={tw('h-12 flex-row justify-between ')}>
         <GoBack />
         <Selector id={initialPage} setSelect={updatePage} />
         <TouchableOpacity
           style={tw(
-            'p-2 items-center justify-center bg-emerald-600 rounded-md',
+            'p-2 items-center justify-center bg-neutral-600 rounded-md',
           )}
           onPress={onPress}>
-          <Text>Save</Text>
+          <IconBookmark size={22} color={colors.neutral[200]} />
         </TouchableOpacity>
       </View>
       <PagerView
         onPageSelected={e => {
           setIntialPage(e.nativeEvent.position);
-          //   console.log('changed', e.nativeEvent.position);
         }}
         ref={pagerRef}
         style={tw('flex-1')}
@@ -80,7 +88,13 @@ export default function EditNote({route}: any) {
           </View>
           <View>{/* <Markdown>{body}</Markdown> */}</View>
         </View>
-        <MarkdownView body={EditBody} title={EditTitle} key={2} />
+
+        <MarkdownView
+          body={EditBody}
+          title={EditTitle}
+          key={2}
+          updatePage={updatePage}
+        />
       </PagerView>
     </View>
   );

@@ -1,9 +1,10 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
 import Home from '../screens/Home';
 import NewNote from '../screens/NewNote';
-import EditNote from '../components/EditNote';
+import EditNote from '../screens/EditNote';
 
 let Stack = createNativeStackNavigator();
 export default function Stacks() {

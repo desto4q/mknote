@@ -1,20 +1,22 @@
 import {IconEye, IconPencil} from '@tabler/icons-react-native';
 import {TouchableOpacity, View} from 'react-native';
-import {tw} from '../utils/utils';
+import {tw, updateAnim} from '../utils/utils';
 
 interface ISelector {
   id: number;
   setSelect?: (id: number) => any;
 }
 let Selector = ({id, setSelect}: ISelector) => {
+  let updateSelect = (num: number) => {
+    if (setSelect) {
+      setSelect(num);
+    }
+  };
   return (
-    <View
-      style={tw('flex-row items-center bg-neutral-800  rounded-md ')}>
+    <View style={tw('flex-row items-center bg-neutral-800  rounded-md ')}>
       <TouchableOpacity
         onPress={() => {
-          if (setSelect) {
-            setSelect(0);
-          }
+          updateSelect(0);
         }}
         style={tw(
           `${
@@ -25,9 +27,7 @@ let Selector = ({id, setSelect}: ISelector) => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          if (setSelect) {
-            setSelect(1);
-          }
+          updateSelect(1);
         }}
         style={tw(
           `${
